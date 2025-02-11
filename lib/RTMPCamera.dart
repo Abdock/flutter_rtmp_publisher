@@ -1,23 +1,20 @@
 import 'dart:async';
-
 import 'package:flutter/services.dart';
 
 const MethodChannel _channel =
-    const MethodChannel('flutter_rtmp_publisher/method');
+MethodChannel('flutter_rtmp_publisher/method');
 
 class CameraSize {
-  int width;
-  int height;
+  final int width;
+  final int height;
   CameraSize(this.width, this.height);
 }
 
-typedef void CameraSizeCallback(CameraSize size);
+typedef CameraSizeCallback = void Function(CameraSize size);
 
 class RTMPCamera {
-  Future<int> _id = _channel.invokeMethod("NewRTMPCamera");
-  // bool _isStreaming = false;
-  // bool _onPreview = false;
-  MethodChannel _methodChannel;
+  final Future<dynamic> _id = _channel.invokeMethod("NewRTMPCamera");
+  late final MethodChannel _methodChannel;
 
   RTMPCamera() {
     _id.then((id) {
@@ -27,24 +24,25 @@ class RTMPCamera {
     });
   }
 
-  Future<Null> unsetView() async {
+  Future<void> unsetView() async {
     await _methodChannel.invokeMethod("unsetView");
   }
 
-  Future<Null> dispose() async {
+  Future<void> dispose() async {
     await _methodChannel.invokeMethod("dispose");
   }
 
-  Future<int> getId() async {
-    return this._id;
+  Future<dynamic> getId() async {
+    return _id;
   }
 
   Future<List<CameraSize>> getResolutions() async {
-    List<dynamic> res = await _methodChannel.invokeMethod("getResolutions");
-    List<CameraSize> list = List.generate(res.length, (index) {
-      return CameraSize(res[index]["width"], res[index]["height"]);
+    final List<dynamic> res =
+    await _methodChannel.invokeMethod("getResolutions");
+    return List.generate(res.length, (index) {
+      final item = res[index];
+      return CameraSize(item["width"], item["height"]);
     });
-    return list;
   }
 
   Future<bool> prepareVideo({
@@ -66,11 +64,11 @@ class RTMPCamera {
   }
 
   Future<bool> prepareAudio({
-    int bitrate: 128,
-    int sampleRate: 44100,
-    bool isStereo: true,
-    bool echoCanceler: false,
-    bool noiseSuppressor: false,
+    int bitrate = 128,
+    int sampleRate = 44100,
+    bool isStereo = true,
+    bool echoCanceler = false,
+    bool noiseSuppressor = false,
   }) async {
     return await _methodChannel.invokeMethod("prepareAudio", {
       "bitrate": bitrate,
@@ -81,43 +79,40 @@ class RTMPCamera {
     });
   }
 
-  Future<Null> startPreview() async {
-    if (await this.onPreview() == false) {
+  Future<void> startPreview() async {
+    if (!(await onPreview())) {
       await _methodChannel.invokeMethod("startPreview");
     } else {
       print("Ignore startPreview.");
     }
   }
 
-  Future<Null> stopPreview() async {
-    if (await this.onPreview() == true) {
+  Future<void> stopPreview() async {
+    if (await onPreview()) {
       await _methodChannel.invokeMethod("stopPreview");
-      // this._onPreview = await _methodChannel.invokeMethod("isOnPreview");
     } else {
       print("Ignore stopPreview.");
     }
   }
 
-  Future<Null> startStream(String url) async {
-    if (await this.isStreaming() == false) {
+  Future<void> startStream(String url) async {
+    if (!(await isStreaming())) {
       await _methodChannel.invokeMethod("startStream", url);
-      // this._isStreaming = await _methodChannel.invokeMethod("isStreaming");
     } else {
       print("Ignore startStream.");
     }
   }
 
-  Future<Null> stopStream() async {
-    if (await this.isStreaming() == true) {
+  Future<void> stopStream() async {
+    if (await isStreaming()) {
       await _methodChannel.invokeMethod("stopStream");
-      // this._isStreaming = await _methodChannel.invokeMethod("isStreaming");
     } else {
       print("Ignore stopStream.");
     }
   }
 
-  Future<Null> switchCamera() async {
-    _methodChannel.invokeMethod("switchCamera");
+  Future<void> switchCamera() async {
+    await _methodChannel.invokeMethod("switchCamera");
   }
 
   Future<bool> isStreaming() async {
