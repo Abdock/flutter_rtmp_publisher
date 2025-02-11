@@ -4,36 +4,35 @@ version '1.0-SNAPSHOT'
 buildscript {
     repositories {
         google()
-        jcenter()
+        mavenCentral()
+        maven { url "https://jitpack.io" }
     }
-
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.2.1'
+        classpath 'com.android.tools.build:gradle:8.5.0'
     }
 }
 
-rootProject.allprojects {
+allprojects {
     repositories {
         google()
-        jcenter()
-        maven { url 'https://jitpack.io' }
+        mavenCentral()
+        maven { url "https://jitpack.io" }
     }
 }
 
 apply plugin: 'com.android.library'
-apply plugin: 'eclipse'
 
 android {
-    compileSdkVersion 28
+    compileSdkVersion = 35
 
     defaultConfig {
-        minSdkVersion 16
-        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        minSdkVersion = 21
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
     lintOptions {
         disable 'InvalidPackage'
     }
     dependencies {
-        compile 'com.github.pedroSG94.rtmp-rtsp-stream-client-java:rtplibrary:1.5.8'
+        implementation 'com.github.pedroSG94.rtmp-rtsp-stream-client-java:rtplibrary:2.1.7'
     }
 }
