@@ -14,7 +14,8 @@ Use the following dependency block in your `pubspec.yaml` file.
 dependencies:
   flutter_rtmp_publisher:
     git:
-      url: git://github.com/OhYee/flutter_rtmp_publisher.git
+      url: https://github.com/Abdock/flutter_rtmp_publisher.git
+      ref: master
 ```
 
 ## Acknowledgement
